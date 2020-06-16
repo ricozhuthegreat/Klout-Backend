@@ -7,6 +7,8 @@ const express = require("express");
 const cors = require("cors");
 const hbs = require('express-handlebars');
 
+const app = express();
+
 // Automatically allow cross-origin requests (start middleware)
 app.use(cors({ origin: true }));
 app.engine('handlebars', hbs({
