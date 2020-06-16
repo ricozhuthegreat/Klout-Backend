@@ -5,9 +5,16 @@ const functions = require("firebase-functions");
 // Express used to handle http api requests
 const express = require("express");
 const cors = require("cors");
+const hbs = require('express-handlebars');
 
 // Automatically allow cross-origin requests (start middleware)
 app.use(cors({ origin: true }));
+app.engine('handlebars', hbs({
+  defaultLayout: 'main',
+  layoutsDir: __dirname + '/views/layouts',
+  partialsDir: __dirname + '/views/partials',
+}));
+app.set('view engine', 'handlebars');
 
 // // Create and Deploy Your First Cloud Functions
 // // https://firebase.google.com/docs/functions/write-firebase-functions
@@ -15,7 +22,14 @@ app.use(cors({ origin: true }));
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
-
+app.get("/:productid/:influencerid", function(req,res){
+  data = {
+    productId: req.params.productid,
+    influencerId: req.params.influencerid
+  }
+  // Get product data from firestore using data's productid
+  res.render("product", data);
+});
 exports.influence = functions.https.onRequest((req, res) => {
 
   if (req.method === "PUT") {
