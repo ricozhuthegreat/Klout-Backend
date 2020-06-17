@@ -60,3 +60,8 @@ exports.influence = functions.https.onRequest((req, res) => {
   });
 
 });
+
+// Cloud function used to listen for updates/publishes in businesses and assign them to influencers
+exports.assignInfluencer = functions.firestore
+  .document('businesses/{userId}')
+  .onWrite((change, context) => { /* ... */ });
