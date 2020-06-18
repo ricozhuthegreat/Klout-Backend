@@ -29,6 +29,13 @@ app.get("/:productid/:influencerid", function(req,res){
     productId: req.params.productid,
     influencerId: req.params.influencerid
   }
+  /*
+    Image Data
+    Product Name
+    Description of product
+    Seller
+    Influencer who's marketting it
+  */
   // Get product data from firestore using data's productid
   res.render("product", data);
 });
