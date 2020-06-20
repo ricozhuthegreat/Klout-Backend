@@ -30,8 +30,12 @@ app.set('view engine', 'handlebars');
 // exports.helloWorld = functions.https.onRequest((request, response) => {
 //  response.send("Hello from Firebase!");
 // });
-app.get("/:productid/:influencerid", function(req,res){
+app.get("/:businessid/:productid/:influencerid", function(req,res){
+
+  const doc = admin.firestore().doc('business/' + req.params.businessid).get();
+
   data = {
+    businessId: req.params.businessid,
     productId: req.params.productid,
     influencerId: req.params.influencerid
   }
@@ -56,11 +60,11 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
 
   // Data to be added to the new document named businessName
   let data = {
-    Products: {},
     influencers: {}
   };
 
-  const doc = admin.firestore().doc('users/' + businessName).set(data);
+  admin.firestore().doc('business/' + businessName).set(data);
+  admin.firestore().doc('business/' + businessName).collection('')
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
@@ -103,7 +107,7 @@ exports.assignInfluencer = functions.firestore
 
     // Get all the influencers as a document
     const influencersRef = db.collection('influencers');
-    const allInfluencers = citiesRef.where('interests', '==', businessField).get()
+    const allInfluencers = citiesRef.where('interests', 'in', businessField).get()
       .then(snapshot => {
 
           let influencerId = snapshot.key;
@@ -119,3 +123,18 @@ exports.assignInfluencer = functions.firestore
       });
     
   });
+
+exports.createInfluencer = functions.auth.user().onCreate((user) => {
+
+  let data = {
+    Interests: {},
+    businesses: {},
+    email: user.email,
+    fullname: user.uid,
+    phone: user.phoneNumber,
+    socials: {}
+  }
+    
+  const doc = admin.firestore().doc('influencers/' + user.uid).set(data);
+
+});
