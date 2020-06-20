@@ -32,13 +32,9 @@ app.set('view engine', 'handlebars');
 // });
 app.get("/:businessid/:productid/:influencerid", function(req,res){
 
-  const doc = admin.firestore().doc('business/' + req.params.businessid).get();
+  const doc = admin.firestore().doc('business/' + req.params.businessid).collections('Products').doc(req.params.businessid);
+  const data = doc.data();
 
-  data = {
-    businessId: req.params.businessid,
-    productId: req.params.productid,
-    influencerId: req.params.influencerid
-  }
   /*
     Image Data
     Product Name
@@ -48,6 +44,7 @@ app.get("/:businessid/:productid/:influencerid", function(req,res){
   */
   // Get product data from firestore using data's productid
   res.render("product", data);
+
 });
 
 exports.addBusiness = functions.https.onRequest((req, res) => {
