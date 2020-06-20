@@ -93,10 +93,14 @@ exports.assignInfluencer = functions.firestore
     const influencersRef = db.collection('influencers');
     const allInfluencers = citiesRef.where('interests', '==', businessField).get()
       .then(snapshot => {
+
           let influencerId = snapshot.key;
+          context.params.influencers.arrayUnion(influencerId);
+
           snapshot.update({
             businesses: admin.firestore.businesses.arrayUnion(businessId)
           });
+          
       })
       .catch(err => {
           console.log('Error getting documents', err);
