@@ -67,6 +67,18 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
       // [END readBodyParam]
     }
     // // [START sendResponse]
+
+    const businessName = req.body.business;
+
+    // Data to be added to the new document named businessName
+    let data = {
+      Products: {},
+      influencers: {}
+    };
+
+    const doc = admin.firestore().doc('users/' + businessName).set(data);
+
+    // ADD HANDLEBAR CODE
     
     res.status(200).send();
     // [END sendResponse]
@@ -100,7 +112,7 @@ exports.assignInfluencer = functions.firestore
           snapshot.update({
             businesses: admin.firestore.businesses.arrayUnion(businessId)
           });
-          
+
       })
       .catch(err => {
           console.log('Error getting documents', err);
