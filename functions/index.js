@@ -52,6 +52,16 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
+  const businessName = req.body.business;
+
+  // Data to be added to the new document named businessName
+  let data = {
+    Products: {},
+    influencers: {}
+  };
+
+  const doc = admin.firestore().doc('users/' + businessName).set(data);
+
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
   return cors(req, res, () => {
@@ -66,17 +76,7 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
       format = req.body.format;
       // [END readBodyParam]
     }
-    // // [START sendResponse]
-
-    const businessName = req.body.business;
-
-    // Data to be added to the new document named businessName
-    let data = {
-      Products: {},
-      influencers: {}
-    };
-
-    const doc = admin.firestore().doc('users/' + businessName).set(data);
+    // [START sendResponse]
 
     // ADD HANDLEBAR CODE
     
