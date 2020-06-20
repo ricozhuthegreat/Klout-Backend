@@ -71,7 +71,7 @@ exports.influence = functions.https.onRequest((req, res) => {
 // Cloud function used to listen for updates/publishes in businesses and assign them to influencers
 exports.assignInfluencer = functions.firestore
   .document('businesses/{userId}')
-  .onWrite((change, context) => {
+  .onCreate((change, context) => {
     // Get an object with the current document value.
     // If the document does not exist, it has been deleted.
     const document = change.after.exists ? change.after.data() : null;
@@ -80,4 +80,7 @@ exports.assignInfluencer = functions.firestore
     const oldDocument = change.before.data();
 
     // perform desired operations ...
+
+
+
   });
