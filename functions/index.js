@@ -53,7 +53,7 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
-  const businessName = req.body.business;
+  const businessName = req.get("business");;
 
   // Data to be added to the new document named businessName
   let data = {
@@ -142,7 +142,7 @@ exports.getBusiness = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
-  const businessName = req.body.business;
+  const businessName = req.get("business");
 
   // Data to be added to the new document named businessName
   let data = admin.firestore().doc('business/' + businessName).data();
@@ -161,7 +161,7 @@ exports.getInfluencers = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
-  const influencerName = req.body.influencer;
+  const influencerName = req.get("influencer");
 
   // Data to be added to the new document named businessName
   let data = admin.firestore().doc('influencer/' + influencerName).data();
@@ -180,7 +180,7 @@ exports.getProductsFromBusiness = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
-  const businessName = req.body.business;
+  const businessName = req.get("business");
 
   // Data to be added to the new document named businessName
   let doc = admin.firestore().doc('business/' + businessName).collections('Products');
