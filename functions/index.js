@@ -9,6 +9,12 @@ const hbs = require('express-handlebars');
 
 const app = express();
 
+// Get a reference of firestore for read/write options
+const admin = require('firebase-admin');
+admin.initializeApp();
+
+const db = admin.firestore();
+
 // Automatically allow cross-origin requests (start middleware)
 app.use(cors({ origin: true }));
 app.engine('handlebars', hbs({
@@ -39,7 +45,8 @@ app.get("/:productid/:influencerid", function(req,res){
   // Get product data from firestore using data's productid
   res.render("product", data);
 });
-exports.influence = functions.https.onRequest((req, res) => {
+
+exports.addBusiness = functions.https.onRequest((req, res) => {
 
   if (req.method === "PUT") {
     return res.status(403).send("Forbidden!");
@@ -51,18 +58,17 @@ exports.influence = functions.https.onRequest((req, res) => {
     // [END usingMiddleware]
     // Reading date format from URL query parameter.
     // [START readQueryParam]
-    // let format = req.query.format;
+    let format = req.query.format;
     // [END readQueryParam]
     // Reading date format from request body query parameter
-    // if (!format) {
-    //   // [START readBodyParam]
-    //   format = req.body.format;
-    //   // [END readBodyParam]
-    // }
+    if (!format) {
+      // [START readBodyParam]
+      format = req.body.format;
+      // [END readBodyParam]
+    }
     // // [START sendResponse]
-    // const formattedDate = moment().format(format);
-    // console.log("Sending Formatted date:", formattedDate);
-    // res.status(200).send(formattedDate);
+    
+    res.status(200).send();
     // [END sendResponse]
   });
 
@@ -71,16 +77,29 @@ exports.influence = functions.https.onRequest((req, res) => {
 // Cloud function used to listen for updates/publishes in businesses and assign them to influencers
 exports.assignInfluencer = functions.firestore
   .document('businesses/{userId}')
-  .onCreate((change, context) => {
-    // Get an object with the current document value.
-    // If the document does not exist, it has been deleted.
-    const document = change.after.exists ? change.after.data() : null;
+  .onCreate((snap, context) => {
 
-    // Get an object with the previous document value (for update or delete)
-    const oldDocument = change.before.data();
+    // Get an object representing the document
+    // e.g. {'name': 'Marie', 'age': 66}
+    const newValue = snap.data();
 
-    // perform desired operations ...
+    // The Id of the business document
+    const businessId = context.params.userId
 
+    // Access a particular field as you would any JS property
+    const businessField = newValue.field;
 
-
+    // Get all the influencers as a document
+    const influencersRef = db.collection('influencers');
+    const allInfluencers = citiesRef.where('interests', '==', businessField).get()
+      .then(snapshot => {
+          let influencerId = snapshot.key;
+          snapshot.update({
+            businesses: admin.firestore.businesses.arrayUnion(businessId)
+          });
+      })
+      .catch(err => {
+          console.log('Error getting documents', err);
+      });
+    
   });
