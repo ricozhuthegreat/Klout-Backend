@@ -135,3 +135,61 @@ exports.createInfluencer = functions.auth.user().onCreate((user) => {
   const doc = admin.firestore().doc('influencers/' + user.uid).set(data);
 
 });
+
+exports.getBusiness = functions.https.onRequest((req, res) => {
+
+  if (req.method === "PUT") {
+    return res.status(403).send("Forbidden!");
+  }
+
+  const businessName = req.body.business;
+
+  // Data to be added to the new document named businessName
+  let data = admin.firestore().doc('business/' + businessName).data();
+
+  // [START usingMiddleware]
+  // Enable CORS using the `cors` express middleware.
+  return cors(req, res, () => {
+    res.status(200).send(data);
+  });
+
+});
+
+exports.getInfluencers = functions.https.onRequest((req, res) => {
+
+  if (req.method === "PUT") {
+    return res.status(403).send("Forbidden!");
+  }
+
+  const influencerName = req.body.influencer;
+
+  // Data to be added to the new document named businessName
+  let data = admin.firestore().doc('influencer/' + influencerName).data();
+
+  // [START usingMiddleware]
+  // Enable CORS using the `cors` express middleware.
+  return cors(req, res, () => {
+    res.status(200).send(data);
+  });
+
+});
+
+exports.getProductsFromBusiness = functions.https.onRequest((req, res) => {
+
+  if (req.method === "PUT") {
+    return res.status(403).send("Forbidden!");
+  }
+
+  const businessName = req.body.business;
+
+  // Data to be added to the new document named businessName
+  let doc = admin.firestore().doc('business/' + businessName).collections('Products');
+
+  // [START usingMiddleware]
+  // Enable CORS using the `cors` express middleware.
+  return cors(req, res, () => {
+    res.status(200).send(doc);
+  });
+
+});
+
