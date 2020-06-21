@@ -18,8 +18,6 @@ admin.initializeApp({
   databaseURL: "https://klout-e9983.firebaseio.com"
 });
 
-const db = admin.firestore();
-
 // Automatically allow cross-origin requests (start middleware)
 app.use(cors({ origin: true }));
 app.engine('handlebars', hbs({
@@ -37,7 +35,7 @@ app.set('view engine', 'handlebars');
 // });
 app.get("/:businessid/:productid/:influencerid", function(req,res){
 
-  const doc = admin.firestore().doc('business/' + req.params.businessid).collections('Products').doc(req.params.businessid);
+  const doc = admin.firestore().doc('businesses/' + req.params.businessid).collections('Products').doc(req.params.businessid);
   const data = doc.data();
 
   /*
@@ -65,8 +63,8 @@ exports.addBusiness = functions.https.onRequest((req, res) => {
     influencers: {}
   };
 
-  admin.firestore().doc('business/' + businessName).set(data);
-  admin.firestore().doc('business/' + businessName).collection('')
+  admin.firestore().doc('businesses/' + businessName).set(data);
+  admin.firestore().doc('businesses/' + businessName).collection('')
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
@@ -148,9 +146,11 @@ exports.getBusiness = functions.https.onRequest((req, res) => {
   }
 
   const businessName = req.get("business");
+  console.log("business: " + businessName);
 
   // Data to be added to the new document named businessName
-  let data = admin.firestore().doc('business/' + businessName).data();
+  let data = admin.firestore().collection('businesses').doc(businessName).data();
+  console.log("data: " + data);
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
@@ -169,7 +169,7 @@ exports.getInfluencers = functions.https.onRequest((req, res) => {
   const influencerName = req.get("influencer");
 
   // Data to be added to the new document named businessName
-  let data = admin.firestore().doc('influencer/' + influencerName).data();
+  let data = admin.firestore().doc('influencers/' + influencerName).data();
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
@@ -188,7 +188,7 @@ exports.getProductsFromBusiness = functions.https.onRequest((req, res) => {
   const businessName = req.get("business");
 
   // Data to be added to the new document named businessName
-  let doc = admin.firestore().doc('business/' + businessName).collections('Products');
+  let doc = admin.firestore().doc('businesses/' + businessName).collections('Products');
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
