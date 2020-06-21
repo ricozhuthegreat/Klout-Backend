@@ -181,12 +181,20 @@ exports.getInfluencers = functions.https.onRequest((req, res) => {
   const influencerName = req.get("influencer");
 
   // Data to be added to the new document named businessName
-  let data = admin.firestore().doc('influencers/' + influencerName).data();
-
-  // [START usingMiddleware]
-  // Enable CORS using the `cors` express middleware.
-  return cors(req, res, () => {
-    res.status(200).send(data);
+  let data = admin.firestore().doc('influencers/' + influencerName).get()
+  .then(doc => {
+    if (!doc.exists) {
+      console.log('No such document!');
+      res.status(404).send('');
+    } else {
+      let returnData = doc.data();
+      console.log('Document data:', returnData);
+      res.send(returnData);
+    }
+  })
+  .catch(err => {
+    console.log('Error getting document', err);
+    res.status(404).send('');
   });
 
 });
@@ -200,12 +208,24 @@ exports.getProductsFromBusiness = functions.https.onRequest((req, res) => {
   const businessName = req.get("business");
 
   // Data to be added to the new document named businessName
-  let doc = admin.firestore().doc('businesses/' + businessName).collections('Products');
+  let doc = admin.firestore().doc('businesses/' + businessName).collections('Products').get()
+  .then(snapshot => {
+    if (snapshot.empty) {
+      console.log('No matching documents.');
+      res.status(404).send('');
+      return;
+    }  
 
-  // [START usingMiddleware]
-  // Enable CORS using the `cors` express middleware.
-  return cors(req, res, () => {
-    res.status(200).send(doc);
+    snapshot.forEach(doc => {
+      console.log(doc.id, '=>', doc.data());
+      let returnData = doc.data();
+      console.log('Document data:', returnData);
+      res.send(returnData);
+    });
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);    
+    res.status(404).send('');
   });
 
 });
