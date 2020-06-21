@@ -7,6 +7,7 @@ const express = require("express");
 const cors = require("cors");
 const hbs = require('express-handlebars');
 
+// Create a new express app for handlebars
 const app = express();
 
 // Get a reference of firestore for read/write options
