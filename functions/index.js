@@ -155,20 +155,20 @@ exports.getBusiness = functions.https.onRequest((req, res) => {
   .then(doc => {
     if (!doc.exists) {
       console.log('No such document!');
+      res.status(404).send('');
     } else {
-      console.log('Document data:', doc.data());
       returnData = doc.data();
+      console.log('Document data:', returnData);
+      res.send(returnData);
     }
   })
   .catch(err => {
     console.log('Error getting document', err);
+    res.status(404).send('');
   });
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
-  return cors(req, res, () => {
-    res.status(200).send(returnData);
-  });
 
 });
 
