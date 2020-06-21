@@ -11,7 +11,7 @@ const app = express();
 
 // Get a reference of firestore for read/write options
 const admin = require('firebase-admin');
-const serviceAccount = require("servicekey.json");
+const serviceAccount = require("./servicekey.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
