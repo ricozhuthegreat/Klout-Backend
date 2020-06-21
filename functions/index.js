@@ -145,17 +145,29 @@ exports.getBusiness = functions.https.onRequest((req, res) => {
     return res.status(403).send("Forbidden!");
   }
 
-  const businessName = req.get("business");
+  const businessName = req.query.business;
   console.log("business: " + businessName);
 
+  let returnData = null;
+
   // Data to be added to the new document named businessName
-  let data = admin.firestore().collection('businesses').doc(businessName).data();
-  console.log("data: " + data);
+  let data = admin.firestore().collection('businesses').doc(businessName).get()
+  .then(doc => {
+    if (!doc.exists) {
+      console.log('No such document!');
+    } else {
+      console.log('Document data:', doc.data());
+      returnData = doc.data();
+    }
+  })
+  .catch(err => {
+    console.log('Error getting document', err);
+  });
 
   // [START usingMiddleware]
   // Enable CORS using the `cors` express middleware.
   return cors(req, res, () => {
-    res.status(200).send(data);
+    res.status(200).send(returnData);
   });
 
 });
